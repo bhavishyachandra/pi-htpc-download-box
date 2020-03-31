@@ -18,22 +18,28 @@ services:
       - OPENVPN_OPTS=--pull-filter ignore "ping-restart" --ping-exit 180
       - TZ=${TZ} # timezone, defined in .env
     ports:
-      - 9091:9091 # Transmission web UI
-      - 51413:51413 # Transmission bittorrent daemon
-      - 51413:51413/udp # Transmission bittorrent daemon
+      - 6881:6881
+      - 6881:6881/udp
+      - 8080:8080
 
-  transmission:
-    image: linuxserver/transmission:latest
-    container_name: transmission
-    restart: unless-stopped
-    network_mode: service:vpn # run on the vpn network
+  qbittorrent:
+    image: linuxserver/qbittorrent
+    container_name: qbittorrent
+    network_mode: service:vpn
     environment:
-      - PUID=${PUID} # default user id, defined in .env
-      - PGID=${PGID} # default group id, defined in .env
-      - TZ=${TZ} # timezone, defined in .env
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK_SET=022
+      - WEBUI_PORT=8080
     volumes:
-      - ${ROOT}/downloads:/downloads # downloads folder
-      - ${CONFIG}/config/transmission:/config # config files
+      - ${CONFIG}/config/qbittorrent:/config
+      - ${ROOT}/downloads:/downloads
+    ports:
+      - 6881:6881
+      - 6881:6881/udp
+      - 8080:8080
+    restart: unless-stopped
 
   jackett:
     container_name: jackett
