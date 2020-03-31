@@ -35,10 +35,6 @@ services:
     volumes:
       - ${CONFIG}/config/qbittorrent:/config
       - ${ROOT}/downloads:/downloads
-    ports:
-      - 6881:6881
-      - 6881:6881/udp
-      - 8080:8080
     restart: unless-stopped
 
   jackett:
