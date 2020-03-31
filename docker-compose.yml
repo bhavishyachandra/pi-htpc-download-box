@@ -19,24 +19,20 @@ services:
       - OPENVPN_OPTS=--pull-filter ignore "ping-restart" --ping-exit 180
       - TZ=${TZ} # timezone, defined in .env
     ports:
-      - 6881:6881
-      - 6881:6881/udp
-      - 8080:8080
+      - 8112:8112
 
-  qbittorrent:
-    image: linuxserver/qbittorrent
-    container_name: qbittorrent
-    network_mode: service:vpn
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - UMASK_SET=022
-      - WEBUI_PORT=8080
-    volumes:
-      - ${CONFIG}/config/qbittorrent:/config
-      - ${ROOT}/downloads:/downloads
+  deluge:
+    container_name: deluge
+    image: linuxserver/deluge:latest
     restart: unless-stopped
+    network_mode: service:vpn # run on the vpn network
+    environment:
+      - PUID=${PUID} # default user id, defined in .env 
+      - PGID=${PGID} # default group id, defined in .env
+      - TZ=${TZ} # timezone, defined in .env
+    volumes:
+      - ${ROOT}/downloads:/downloads # downloads folder
+      - ${CONFIG}/config/deluge:/config # config files
 
   jackett:
     container_name: jackett
