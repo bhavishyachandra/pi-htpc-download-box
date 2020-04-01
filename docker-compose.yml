@@ -14,25 +14,26 @@ services:
       - PASS=${VPN_PASSWORD} # vpn password, defined in .env
       - COUNTRY=${VPN_COUNTRY} # vpn country, defined in .env
       - NETWORK=${NETWORK} # local network mask, defined in .env
-      - PROTOCOL=UDP
-      - CATEGORY=P2P
-      - OPENVPN_OPTS=--pull-filter ignore "ping-restart" --ping-exit 180
       - TZ=${TZ} # timezone, defined in .env
     ports:
-      - 8112:8112
+      - 6881:6881
+      - 6881:6881/udp
+      - 8090:8090
 
-  deluge:
-    container_name: deluge
-    image: linuxserver/deluge:latest
-    restart: unless-stopped
-    network_mode: service:vpn # run on the vpn network
+  qbittorrent:
+    container_name: qbittorrent
+    image: linuxserver/qbittorrent
+    network_mode: service:vpn
     environment:
-      - PUID=${PUID} # default user id, defined in .env 
-      - PGID=${PGID} # default group id, defined in .env
-      - TZ=${TZ} # timezone, defined in .env
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK_SET=022
+      - WEBUI_PORT=8090
     volumes:
-      - ${ROOT}/downloads:/downloads # downloads folder
-      - ${CONFIG}/config/deluge:/config # config files
+      - ${CONFIG}/config/qbittorrent:/config
+      - ${ROOT}/downloads:/downloads
+    restart: unless-stopped
 
   jackett:
     container_name: jackett
