@@ -11,9 +11,7 @@ services:
     environment:
       - USER=${VPN_USER} # vpn user, defined in .env
       - PASS=${VPN_PASSWORD} # vpn password, defined in .env
-      - COUNTRY=${VPN_COUNTRY} # vpn country, defined in .env
       - NETWORK=${NETWORK} # local network mask, defined in .env
-      - TZ=${TZ} # timezone, defined in .env
     ports:
       - 6881:6881
       - 6881:6881/udp
